@@ -68,13 +68,6 @@ npm install
 npm run dev
 ```
 
-## 📧 Email Configuration
-
-Edit `backend/src/main/resources/application.properties`:
-```properties
-spring.mail.username=naveenkumar27092006@gmail.com
-spring.mail.password=ebru qllm vpxv itll
-```
 
 ## 🎯 Usage Flow
 
