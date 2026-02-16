@@ -43,17 +43,6 @@ Complete full-stack personal finance management application with AI insights, re
 - Node.js 18+
 - Maven 3.6+
 
-### One-Click Start
-```bash
-START_ALL.bat
-```
-
-This will:
-1. Start backend on port 8081
-2. Start frontend on port 5173
-3. Open in your browser
-
-### Manual Start
 
 #### Backend
 ```bash
