@@ -5,12 +5,15 @@ import { Plus, Target, Calendar, Edit2, Trash2 } from 'lucide-react';
 import api from '../../api/axios';
 import { toast } from 'react-hot-toast';
 import GoalModal from '../../components/modals/GoalModal';
+import ContributionModal from '../../components/modals/ContributionModal';
 
 export default function Goals() {
     const [goals, setGoals] = useState([]);
     const [loading, setLoading] = useState(true);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedGoal, setSelectedGoal] = useState(null);
+    const [contributionModalOpen, setContributionModalOpen] = useState(false);
+    const [contributionGoal, setContributionGoal] = useState(null);
 
     const fetchGoals = async () => {
         setLoading(true);
@@ -48,6 +51,11 @@ export default function Goals() {
     const handleCreate = () => {
         setSelectedGoal(null);
         setModalOpen(true);
+    };
+
+    const handleContribute = (goal) => {
+        setContributionGoal(goal);
+        setContributionModalOpen(true);
     };
 
     return (
@@ -120,7 +128,7 @@ export default function Goals() {
                                     ></div>
                                 </div>
 
-                                <Button variant="outline" size="sm" className="w-full" onClick={() => handleEdit(goal)}>
+                                <Button variant="outline" size="sm" className="w-full" onClick={() => handleContribute(goal)}>
                                     Add Contribution
                                 </Button>
                             </Card>
@@ -133,6 +141,13 @@ export default function Goals() {
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 goal={selectedGoal}
+                onSuccess={fetchGoals}
+            />
+
+            <ContributionModal
+                isOpen={contributionModalOpen}
+                onClose={() => setContributionModalOpen(false)}
+                goal={contributionGoal}
                 onSuccess={fetchGoals}
             />
         </div>

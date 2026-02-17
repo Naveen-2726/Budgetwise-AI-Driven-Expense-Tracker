@@ -113,7 +113,6 @@ public class UserService implements UserDetailsService {
             throw new RuntimeException("SHA-256 algorithm not available", e);
         }
     }
-    }
 
     public User updateUserProfile(String email, String firstName, String lastName) {
         User user = userRepository.findByEmail(email)

@@ -52,6 +52,7 @@ public class RecurringTransaction {
     @Column(nullable = false)
     private Transaction.PaymentMethod paymentMethod;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean active = true;
 

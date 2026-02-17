@@ -43,10 +43,11 @@ export default function LandingPage() {
                             >
                                 {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                             </button>
-                            <Link to="/login">
-                                <Button variant="ghost" className="dark:text-gray-300 dark:hover:bg-gray-800">
-                                    Sign In
-                                </Button>
+                            <Link
+                                to="/login"
+                                className="inline-flex items-center justify-center rounded-lg font-medium h-10 px-4 py-2 bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                Sign In
                             </Link>
                             <Link to="/signup">
                                 <Button className="bg-gradient-to-r from-primary-600 to-indigo-600 hover:from-primary-700 hover:to-indigo-700">

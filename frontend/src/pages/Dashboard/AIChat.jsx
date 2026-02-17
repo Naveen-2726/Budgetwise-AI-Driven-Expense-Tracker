@@ -25,6 +25,33 @@ export default function AIChat() {
         scrollToBottom();
     }, [messages, loading]);
 
+    // Simple markdown-like formatting for AI responses
+    const formatMessage = (text) => {
+        if (!text) return text;
+        // Split by lines
+        const lines = text.split('\n');
+        return lines.map((line, idx) => {
+            // Bold: **text**
+            let formatted = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic: *text*
+            formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Bullet points
+            if (formatted.match(/^[-•]\s/)) {
+                formatted = '&bull; ' + formatted.replace(/^[-•]\s/, '');
+            }
+            // Numbered lists
+            if (formatted.match(/^\d+\.\s/)) {
+                // keep as is, already numbered
+            }
+            return (
+                <span key={idx}>
+                    <span dangerouslySetInnerHTML={{ __html: formatted }} />
+                    {idx < lines.length - 1 && <br />}
+                </span>
+            );
+        });
+    };
+
     const handleAnalyze = async () => {
         setLoading(true);
         try {
@@ -37,7 +64,7 @@ export default function AIChat() {
             setMessages(prev => [...prev, { role: 'assistant', content: insight }]);
         } catch (error) {
             toast.error('Failed to generate insights');
-            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encounted an error while analyzing your data.' }]);
+            setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error while analyzing your data.' }]);
         } finally {
             setLoading(false);
         }
@@ -82,11 +109,11 @@ export default function AIChat() {
                                 <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center mx-2 ${m.role === 'user' ? 'bg-primary-100 text-primary-600 dark:bg-primary-900 dark:text-primary-300' : 'bg-green-100 text-green-600 dark:bg-green-900 dark:text-green-300'}`}>
                                     {m.role === 'user' ? <UserIcon size={16} /> : <Bot size={16} />}
                                 </div>
-                                <div className={`p-3 rounded-2xl text-sm shadow-sm whitespace-pre-wrap ${m.role === 'user'
+                                <div className={`p-3 rounded-2xl text-sm shadow-sm ${m.role === 'user'
                                     ? 'bg-primary-600 text-white rounded-br-none'
                                     : 'bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-bl-none'
                                     }`}>
-                                    {m.content}
+                                    {m.role === 'assistant' ? formatMessage(m.content) : m.content}
                                 </div>
                             </div>
                         </div>

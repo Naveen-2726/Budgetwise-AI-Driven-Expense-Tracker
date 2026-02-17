@@ -11,7 +11,8 @@ import api from '../../api/axios';
 export default function Settings() {
     const { user, logout } = useAuth();
     const { theme, toggleTheme } = useTheme();
-    const [loading, setLoading] = useState(false);
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [passwordLoading, setPasswordLoading] = useState(false);
 
     // Mock states for form fields (would be connected to API in a real app)
     const [profileData, setProfileData] = useState({
@@ -28,7 +29,7 @@ export default function Settings() {
 
     const handleProfileUpdate = async (e) => {
         e.preventDefault();
-        setLoading(true);
+        setProfileLoading(true);
         try {
             const response = await api.put('/user/profile', {
                 firstName: profileData.firstName,
@@ -39,7 +40,7 @@ export default function Settings() {
             console.error(error);
             toast.error(error.response?.data?.message || 'Failed to update profile');
         } finally {
-            setLoading(false);
+            setProfileLoading(false);
         }
     };
 
@@ -49,7 +50,7 @@ export default function Settings() {
             toast.error("New passwords don't match");
             return;
         }
-        setLoading(true);
+        setPasswordLoading(true);
         try {
             await api.put('/user/password', {
                 currentPassword: passwordData.currentPassword,
@@ -61,7 +62,7 @@ export default function Settings() {
             console.error(error);
             toast.error(error.response?.data?.message || 'Failed to update password');
         } finally {
-            setLoading(false);
+            setPasswordLoading(false);
         }
     };
 
@@ -96,7 +97,7 @@ export default function Settings() {
                         className="bg-gray-50 dark:bg-gray-900/50"
                     />
                     <div className="flex justify-end">
-                        <Button type="submit" isLoading={loading}>Save Changes</Button>
+                        <Button type="submit" isLoading={profileLoading}>Save Changes</Button>
                     </div>
                 </form>
             </Card>
@@ -157,7 +158,7 @@ export default function Settings() {
                         />
                     </div>
                     <div className="flex justify-end">
-                        <Button type="submit" variant="secondary" isLoading={loading}>Update Password</Button>
+                        <Button type="submit" variant="secondary" isLoading={passwordLoading}>Update Password</Button>
                     </div>
                 </form>
             </Card>

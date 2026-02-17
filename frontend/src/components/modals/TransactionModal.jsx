@@ -84,16 +84,25 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
         }
     };
 
+    // Handle Escape key to close
+    useEffect(() => {
+        const handleEsc = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+        if (isOpen) document.addEventListener('keydown', handleEsc);
+        return () => document.removeEventListener('keydown', handleEsc);
+    }, [isOpen, onClose]);
+
     if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-                <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                    <h2 className="text-xl font-bold text-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-md overflow-hidden dark:border dark:border-gray-700">
+                <div className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-700">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                         {transaction ? 'Edit Transaction' : 'New Transaction'}
                     </h2>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <X size={24} />
                     </button>
                 </div>
@@ -119,10 +128,10 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                         />
 
                         <div className="w-full">
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Date</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
                             <input
                                 type="date"
-                                className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                                 value={formData.transactionDate}
                                 onChange={(e) => setFormData({ ...formData, transactionDate: e.target.value })}
                                 required
@@ -132,9 +141,9 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
 
                     <div className="grid grid-cols-2 gap-4">
                         <div className="w-full">
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Type</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Type</label>
                             <select
-                                className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                                 value={formData.type}
                                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
                             >
@@ -144,9 +153,9 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                         </div>
 
                         <div className="w-full">
-                            <label className="mb-1 block text-sm font-medium text-gray-700">Category</label>
+                            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
                             <select
-                                className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                                className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                                 value={formData.categoryId}
                                 onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
                             >
@@ -159,9 +168,9 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                     </div>
 
                     <div className="w-full">
-                        <label className="mb-1 block text-sm font-medium text-gray-700">Payment Method</label>
+                        <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Method</label>
                         <select
-                            className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                            className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                             value={formData.paymentMethod}
                             onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
                         >
@@ -175,7 +184,7 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                     </div>
 
                     {!transaction && (
-                        <div className="border-t border-gray-100 pt-4">
+                        <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
                             <div className="flex items-center mb-4">
                                 <input
                                     id="recurring"
@@ -184,16 +193,16 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                                     checked={formData.isRecurring}
                                     onChange={(e) => setFormData({ ...formData, isRecurring: e.target.checked })}
                                 />
-                                <label htmlFor="recurring" className="ml-2 block text-sm text-gray-900">
+                                <label htmlFor="recurring" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
                                     Make this a recurring transaction
                                 </label>
                             </div>
 
                             {formData.isRecurring && (
-                                <div className="w-full bg-gray-50 p-3 rounded-lg animate-in fade-in slide-in-from-top-2">
-                                    <label className="mb-1 block text-sm font-medium text-gray-700">Frequency</label>
+                                <div className="w-full bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg animate-in fade-in slide-in-from-top-2">
+                                    <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Frequency</label>
                                     <select
-                                        className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
+                                        className="block w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-1 focus:ring-primary-500 focus:outline-none"
                                         value={formData.recurringFrequency}
                                         onChange={(e) => setFormData({ ...formData, recurringFrequency: e.target.value })}
                                         required={formData.isRecurring}
@@ -203,7 +212,7 @@ export default function TransactionModal({ isOpen, onClose, transaction, onSucce
                                         <option value="MONTHLY">Monthly</option>
                                         <option value="YEARLY">Yearly</option>
                                     </select>
-                                    <p className="text-xs text-gray-500 mt-2">
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
                                         A recurring rule will be created starting from the selected date.
                                     </p>
                                 </div>

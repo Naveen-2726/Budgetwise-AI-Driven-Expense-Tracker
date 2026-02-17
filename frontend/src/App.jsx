@@ -9,6 +9,7 @@ import LandingPage from './pages/LandingPage';
 import Login from './pages/Auth/Login';
 import Signup from './pages/Auth/Signup';
 import VerifyOtp from './pages/Auth/VerifyOtp';
+import ForgotPassword from './pages/Auth/ForgotPassword';
 import DashboardLayout from './components/layout/DashboardLayout';
 import DashboardOverview from './pages/Dashboard/DashboardOverview';
 import Transactions from './pages/Dashboard/Transactions';
@@ -18,9 +19,9 @@ import AIChat from './pages/Dashboard/AIChat';
 import Achievements from './pages/Dashboard/Achievements';
 import Settings from './pages/Dashboard/Settings';
 
-// Protected Route Component
+// Protected Route Component — requires OTP-verified token
 const ProtectedRoute = ({ children }) => {
-  const { token, loading } = useAuth();
+  const { token, user, loading } = useAuth();
 
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -48,6 +49,27 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
+// OTP Route Guard — only accessible during OTP flow
+const OtpRoute = ({ children }) => {
+  const { token, otpPending, loading } = useAuth();
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
+
+  // Already logged in — go to dashboard
+  if (token) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  // Not in OTP flow — go to login
+  if (!otpPending) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <Router>
@@ -60,7 +82,8 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
               <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
-              <Route path="/verify-otp" element={<VerifyOtp />} />
+              <Route path="/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+              <Route path="/verify-otp" element={<OtpRoute><VerifyOtp /></OtpRoute>} />
 
               {/* Protected Routes */}
               <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>

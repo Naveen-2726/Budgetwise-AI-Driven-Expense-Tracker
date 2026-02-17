@@ -20,6 +20,16 @@ public class AuthController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
     
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> getCurrentUser(@org.springframework.security.core.annotation.AuthenticationPrincipal User user) {
+        AuthResponse response = new AuthResponse();
+        response.setEmail(user.getEmail());
+        response.setFirstName(user.getFirstName());
+        response.setLastName(user.getLastName());
+        response.setMessage("User found");
+        return ResponseEntity.ok(response);
+    }
+    
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         try {

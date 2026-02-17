@@ -75,13 +75,16 @@ public class AIService {
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, entity, Map.class);
+            @SuppressWarnings("unchecked")
+            ResponseEntity<Map<String, Object>> response = (ResponseEntity<Map<String, Object>>) (ResponseEntity<?>) restTemplate.postForEntity(apiUrl, entity, Map.class);
             
             if (response.getBody() != null && response.getBody().containsKey("choices")) {
-                List choices = (List) response.getBody().get("choices");
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
                 if (!choices.isEmpty()) {
-                    Map firstChoice = (Map) choices.get(0);
-                    Map messageObj = (Map) firstChoice.get("message");
+                    Map<String, Object> firstChoice = choices.get(0);
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> messageObj = (Map<String, Object>) firstChoice.get("message");
                     return (String) messageObj.get("content");
                 }
             }

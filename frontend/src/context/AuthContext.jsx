@@ -10,21 +10,32 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
+    const [otpPending, setOtpPending] = useState(false);
+    const [otpEmail, setOtpEmail] = useState(null);
 
     useEffect(() => {
-        if (token) {
-            // Decode token or fetch user profile if endpoint exists
-            // For now, we decode simplistic JWT or just assume logged in
-            // Ideally, call /api/auth/me if it exists
+        const fetchUser = async () => {
+            if (token) {
+                try {
+                    const response = await api.get('/auth/me');
+                    setUser(response.data);
+                } catch (error) {
+                    // Token is invalid or expired
+                    localStorage.removeItem('token');
+                    setToken(null);
+                    setUser(null);
+                }
+            }
             setLoading(false);
-        } else {
-            setLoading(false);
-        }
+        };
+        fetchUser();
     }, [token]);
 
     const login = async (email, password) => {
         const response = await api.post('/auth/login', { email, password });
         // Expecting OTP flow, so no token yet
+        setOtpPending(true);
+        setOtpEmail(email);
         return response.data;
     };
 
@@ -36,6 +47,8 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('token', token);
             setToken(token);
             setUser(userData);
+            setOtpPending(false);
+            setOtpEmail(null);
             toast.success('Successfully logged in!');
             return true;
         } catch (error) {
@@ -46,6 +59,8 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (firstName, lastName, email, password) => {
         await api.post('/auth/register', { firstName, lastName, email, password });
+        setOtpPending(true);
+        setOtpEmail(email);
         toast.success('Registration successful! Check your email.');
     };
 
@@ -53,12 +68,14 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
+        setOtpPending(false);
+        setOtpEmail(null);
         toast.success('Logged out');
         window.location.href = '/';
     };
 
     return (
-        <AuthContext.Provider value={{ user, token, login, verifyOtp, register, logout, loading }}>
+        <AuthContext.Provider value={{ user, token, login, verifyOtp, register, logout, loading, otpPending, otpEmail, setOtpPending }}>
             {children}
         </AuthContext.Provider>
     );
