@@ -57,6 +57,9 @@ public class AIService {
 
     private String callOpenRouter(String prompt) {
         try {
+            log.info("Calling OpenRouter API with key starting with: {}",
+                    apiKey != null && apiKey.length() > 10 ? apiKey.substring(0, 10) + "..." : "NULL/EMPTY");
+
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("Authorization", "Bearer " + apiKey);
@@ -65,13 +68,13 @@ public class AIService {
             headers.set("X-Title", "Budgetwise");
 
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "openai/gpt-3.5-turbo"); // Or any other cheap/fast model available on OpenRouter
-            
+            requestBody.put("model", "google/gemma-3-4b-it:free"); // Free model on OpenRouter
+
             Map<String, String> message = new HashMap<>();
             message.put("role", "user");
             message.put("content", prompt);
             
-            requestBody.put("messages", new Object[]{message});
+            requestBody.put("messages", List.of(message));
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
@@ -90,6 +93,9 @@ public class AIService {
             }
             return "Unable to generate insights at the moment.";
 
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+            log.error("OpenRouter API HTTP error: {} - Response: {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return "Error generating insights: " + e.getStatusCode() + " - " + e.getResponseBodyAsString();
         } catch (Exception e) {
             log.error("Error calling OpenRouter API", e);
             return "Error generating insights: " + e.getMessage();
